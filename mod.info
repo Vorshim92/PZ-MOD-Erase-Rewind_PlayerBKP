@@ -1,0 +1,5 @@
+name=Erase&Rewind Player Backup
+id=Erase&Rewind_BKP
+description=Safe backup for player
+poster=poster.png
+require=Erase&Rewind_RPGbyVorshimtest

@@ -1,14 +1,12 @@
-if isClient() then
+if isClient() then return end
     if getActivatedMods():contains("Erase&Rewind_RPGbyVorshimtest") then
         local characterManagement = require('character/CharacterManagement')
-        local modDataManager = require('shared/lib/ModDataManager')
-        ---@class ModData
 
-        local ModData = {}
+
+        local DataMod = {}
 
         --- **ModData Character**
-        ---@return table string
-        ModData.Character = {
+        DataMod.Character = {
 
             BKP_MOD_1 = "BKP_MOD_1",
             BKP_MOD_2 = "BKP_MOD_2",
@@ -43,27 +41,26 @@ if isClient() then
             }
         }
 
-        local player = getPlayer()
-        local function onStartSaveBkp()
-            if player and player:isAlive() then
-                if not modDataManager.isExists(ModData.Character.isDeath) then
+        local function onStartSaveBkp(playerIndex, player)
+            -- local player = getPlayer()
+            if player  then
+                if not ModData.exists(DataMod.Character.isDeath) then
                     print("ErasePlayerBKP: Giocatore mai morto, sono in BKP_1")
-                    if modDataManager.isExists(ModData.Character.BKP_MOD_1) then
-                        characterManagement.removeAllModData(ModData.Character.BKP_1)
-                        print("ErasePlayerBKP: BKP_1 già esistente, rimuovo Backup_1 prima di riscriverlo")
+                    if not ModData.exists(DataMod.Character.BKP_MOD_1) then
+                        ModData.create(DataMod.Character.BKP_MOD_1)
+                        print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
                     end
-                        modDataManager.save(ModData.Character.BKP_MOD_1)
-                        characterManagement.writeBook(player, ModData.Character.BKP_1)
-                elseif modDataManager.isExists(ModData.Character.isDeath) then
+                    characterManagement.writeBook(player, DataMod.Character.BKP_1)
+                    print("ErasePlayerBKP: BKP_1 scritto con successo")
+                elseif ModData.exists(DataMod.Character.isDeath) then
                     print("ErasePlayerBKP: Giocatore morto, sono in BKP_2")
-                    if modDataManager.isExists(ModData.Character.BKP_MOD_2) then
-                        characterManagement.removeAllModData(ModData.Character.BKP_2)
-                        print("ErasePlayerBKP: BKP_2 è esistente, rimuovo Backup_2 prima di riscriverlo")
+                    if not ModData.exists(DataMod.Character.BKP_MOD_2) then
+                        ModData.create(DataMod.Character.BKP_MOD_2)
+                        print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
                     end
-                        modDataManager.save(ModData.Character.BKP_MOD_2)
-                        characterManagement.writeBook(player, ModData.Character.BKP_2)
+                    characterManagement.writeBook(player, DataMod.Character.BKP_2)
+                    print("ErasePlayerBKP: BKP_2 scritto con successo")
                 end
-                print("ErasePlayerBKP: Backup all'avvio creato per il giocatore: " )
             else
                 print("ErasePlayerBKP: Impossibile creare il backup: giocatore non disponibile o non vivo.")
             end
@@ -71,13 +68,12 @@ if isClient() then
 
         Events.OnCreatePlayer.Add(onStartSaveBkp)
         Events.OnCharacterDeath.Add(function()
-            if modDataManager.isExists(ModData.Character.isDeath) then
-                modDataManager.remove(ModData.Character.isDeath)
+            if ModData.exists(DataMod.Character.isDeath) then
+                ModData.delete(DataMod.Character.isDeath)
             else
-            modDataManager.save(ModData.Character.isDeath)
+            ModData.create(DataMod.Character.isDeath)
             end
             end)
     else
         print("ErasePlayerBKP: Mod Erase&Rewind_RPGbyVorshim non attiva. Nessuna azione verrà eseguita.")
     end
-end

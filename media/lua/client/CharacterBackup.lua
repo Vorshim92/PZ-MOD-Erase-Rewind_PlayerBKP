@@ -1,8 +1,8 @@
 if not isClient() then return end
     if getActivatedMods():contains("Erase&Rewind_RPGbyVorshimtest") then
         local characterManagement = require('character/CharacterManagement')
-
-
+        local activityCalendar = require('lib/ActivityCalendar')
+        local modDataManager = require('lib/ModDataManager')
         local DataMod = {}
 
         --- **ModData Character**
@@ -42,25 +42,34 @@ if not isClient() then return end
         }
 
         local function onStartSaveBkp(playerIndex, player)
-            -- local player = getPlayer()
+            -- local player = getPlayer() -- do not use because events it self give us player
             if player  then
-                if not ModData.exists(DataMod.Character.isDeath) then
-                    print("ErasePlayerBKP: Giocatore mai morto, sono in BKP_1")
-                    if not ModData.exists(DataMod.Character.BKP_MOD_1) then
-                        ModData.create(DataMod.Character.BKP_MOD_1)
+                local time = activityCalendar.getStarTime()
+                time = activityCalendar.fromSecondToDate(time)
+                local lines = {}
+                table.insert(lines, time)
+                if not modDataManager.isExists(DataMod.Character.isDeath) then
+                    print("ErasePlayerBKP: Giocatore in BKP_1")
+                    if modDataManager.isExists(DataMod.Character.BKP_MOD_1) then
+                        modDataManager.remove(DataMod.Character.BKP_MOD_1)
                         print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
                     end
+
                     characterManagement.writeBook(player, DataMod.Character.BKP_1)
-                    print("ErasePlayerBKP: BKP_1 scritto con successo")
-                elseif ModData.exists(DataMod.Character.isDeath) then
-                    print("ErasePlayerBKP: Giocatore morto, sono in BKP_2")
-                    if not ModData.exists(DataMod.Character.BKP_MOD_2) then
-                        ModData.create(DataMod.Character.BKP_MOD_2)
+                    modDataManager.save(DataMod.Character.BKP_MOD_1, lines)
+                    print("ErasePlayerBKP: BKP_1 scritto con successo. Orario: " .. time)
+                elseif modDataManager.isExists(DataMod.Character.isDeath) then
+                    print("ErasePlayerBKP: Giocatore in BKP_2")
+                    if modDataManager.isExists(DataMod.Character.BKP_MOD_2) then
+                        modDataManager.remove(DataMod.Character.BKP_MOD_2)
                         print("ErasePlayerBKP: BKP_2 pronto per la scrittura")
                     end
                     characterManagement.writeBook(player, DataMod.Character.BKP_2)
-                    print("ErasePlayerBKP: BKP_2 scritto con successo")
+                    modDataManager.save(DataMod.Character.BKP_MOD_2, lines)
+                    print("ErasePlayerBKP: BKP_2 scritto con successo. Orario: " .. time)
                 end
+                
+        
             else
                 print("ErasePlayerBKP: Impossibile creare il backup: giocatore non disponibile o non vivo.")
             end
@@ -68,10 +77,10 @@ if not isClient() then return end
 
         Events.OnCreatePlayer.Add(onStartSaveBkp)
         Events.OnCharacterDeath.Add(function()
-            if ModData.exists(DataMod.Character.isDeath) then
-                ModData.remove(DataMod.Character.isDeath)
+            if modDataManager.isExists(DataMod.Character.isDeath) then
+                modDataManager.remove(DataMod.Character.isDeath)
             else
-            ModData.create(DataMod.Character.isDeath)
+            modDataManager.save(DataMod.Character.isDeath)
             end
             end)
     else

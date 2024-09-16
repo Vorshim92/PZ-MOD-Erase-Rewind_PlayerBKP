@@ -1,4 +1,4 @@
-if isClient() then return end
+if not isClient() then return end
     if getActivatedMods():contains("Erase&Rewind_RPGbyVorshimtest") then
         local characterManagement = require('character/CharacterManagement')
 
@@ -56,7 +56,7 @@ if isClient() then return end
                     print("ErasePlayerBKP: Giocatore morto, sono in BKP_2")
                     if not ModData.exists(DataMod.Character.BKP_MOD_2) then
                         ModData.create(DataMod.Character.BKP_MOD_2)
-                        print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
+                        print("ErasePlayerBKP: BKP_2 pronto per la scrittura")
                     end
                     characterManagement.writeBook(player, DataMod.Character.BKP_2)
                     print("ErasePlayerBKP: BKP_2 scritto con successo")
@@ -69,7 +69,7 @@ if isClient() then return end
         Events.OnCreatePlayer.Add(onStartSaveBkp)
         Events.OnCharacterDeath.Add(function()
             if ModData.exists(DataMod.Character.isDeath) then
-                ModData.delete(DataMod.Character.isDeath)
+                ModData.remove(DataMod.Character.isDeath)
             else
             ModData.create(DataMod.Character.isDeath)
             end

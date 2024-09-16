@@ -1,8 +1,9 @@
 version=1
-title=Mod Template
-description=This is an example mod with two worlds.  You can use this as a template for your own map mods.
+id=3332497111
+title=Erase & Rewind Player BKP
+description=This is an extension of Erase & Rewind for autobackup of the IsoPlayer at every login. 
+description=The mod switch between to "bank" in ModData when the character die so that there is always one valid backup from the previous death. 
 description=
-description=The first world has a single 300x300-tile cell.
-description=The second world adds cells all around the first world.
-tags=
+description=Needs to implement Lua Commands for the restoring process (for admin)
+tags=Build 41;Multiplayer
 visibility=public

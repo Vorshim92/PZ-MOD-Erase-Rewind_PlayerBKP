@@ -1,5 +1,5 @@
 if not isClient() then return end
-    if getActivatedMods():contains("Erase&Rewind_RPGbyVorshimtest") then
+    if getActivatedMods():contains("Erase&Rewind_RPGbyVorshim") then
         local characterManagement = require('character/CharacterManagement')
         local activityCalendar = require('lib/ActivityCalendar')
         local modDataManager = require('lib/ModDataManager')

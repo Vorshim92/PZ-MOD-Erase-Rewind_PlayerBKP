@@ -56,6 +56,8 @@ if not isClient() then return end
                     end
 
                     characterManagement.writeBook(player, DataMod.Character.BKP_1)
+                    local data = modDataManager.read(DataMod.Character.BKP_1)
+                    sendServerCommand('Vorshim', "saveCharacterBackup", data)
                     modDataManager.save(DataMod.Character.BKP_MOD_1, lines)
                     print("ErasePlayerBKP: BKP_1 scritto con successo. Orario: " .. time)
                 elseif modDataManager.isExists(DataMod.Character.isDeath) then
@@ -65,9 +67,14 @@ if not isClient() then return end
                         print("ErasePlayerBKP: BKP_2 pronto per la scrittura")
                     end
                     characterManagement.writeBook(player, DataMod.Character.BKP_2)
+                    local data = modDataManager.read(DataMod.Character.BKP_2)
+                    sendServerCommand('Vorshim', "saveCharacterBackup", data)
+
                     modDataManager.save(DataMod.Character.BKP_MOD_2, lines)
                     print("ErasePlayerBKP: BKP_2 scritto con successo. Orario: " .. time)
                 end
+
+                
                 
         
             else

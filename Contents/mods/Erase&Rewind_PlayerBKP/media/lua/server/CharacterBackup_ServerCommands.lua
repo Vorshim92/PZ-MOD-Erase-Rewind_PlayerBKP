@@ -59,14 +59,14 @@ end
 
 
 -- Funzione per salvare una specifica sottotabella di DataMod.Character
-function Commands.saveCharacterBackup(player, characterData)
+function Commands.saveCharacterBackup(player, data)
     if isClient() or not data then return end
     local id = player:getUsername()
     
-    print("[Commands.saveData] Inizio del salvataggio dei dati per ID " .. id)
+    print("[Commands.saveCharacterBackup] Inizio del salvataggio dei dati per ID " .. id)
     -- Definisci il percorso del file
-    local filepath = "/Backup/CharacterData_" .. id .. ".txt"
-    print("[Commands.saveData] Percorso del file: " .. filepath)
+    local filepath = "/Backup/PlayerBKP_" .. id .. ".txt"
+    print("[Commands.saveCharacterBackup] Percorso del file: " .. filepath)
     
     -- Controlla se il file esiste già
     local fileExists = false
@@ -76,29 +76,19 @@ function Commands.saveCharacterBackup(player, characterData)
         fileExists = true
     end
     
+    local tempFilePath = filepath .. ".temp"
     
-
-    -- Se il file esiste, eliminarlo o fare una copia temporanea
+    -- Se il file esiste, fare una copia temporanea rinominandolo
     if fileExists then
-        -- Opzione 1: Eliminare il file esistente
-        -- local success, err = os.remove(filepath)
-        -- if success then
-        --     print("[Commands.saveData] File di backup esistente eliminato: " .. filepath)
-        -- else
-        --     print("[Commands.saveData] Errore durante l'eliminazione del file " .. filepath .. ": " .. err)
-        --     return
-        -- end
-        -- Se desideri fare una copia temporanea prima di eliminarlo, puoi implementare questa logica qui
-        -- Fare una copia temporanea del file esistente
-        local tempFilePath = filepath .. ".temp"
         local copySuccess, copyErr = os.rename(filepath, tempFilePath)
         if copySuccess then
-            print("[Commands.saveData] Copia temporanea del file di backup esistente creata: " .. tempFilePath)
+            print("[Commands.saveCharacterBackup] Copia temporanea del file di backup esistente creata: " .. tempFilePath)
         else
-            print("[Commands.saveData] Errore durante la creazione della copia temporanea: " .. copyErr)
+            print("[Commands.saveCharacterBackup] Errore durante la creazione della copia temporanea: " .. copyErr)
+            return
         end
     else
-        print("[Commands.saveData] Nessun file di backup esistente trovato per ID " .. id)
+        print("[Commands.saveCharacterBackup] Nessun file di backup esistente trovato per ID " .. id)
     end
     
     -- Serializza i dati e scrivili nel file
@@ -107,11 +97,30 @@ function Commands.saveCharacterBackup(player, characterData)
         local serializedData = serializeData(data)
         filewriter:write(serializedData)
         filewriter:close()
-        print("[Commands.saveData] Dati del personaggio salvati correttamente per ID: " .. id)
+        print("[Commands.saveCharacterBackup] Dati del personaggio salvati correttamente per ID: " .. id)
+        -- Dopo aver scritto il nuovo backup, eliminare la copia temporanea
+        if fileExists then
+            local success, err = os.remove(tempFilePath)
+            if success then
+                print("[Commands.saveCharacterBackup] Copia temporanea eliminata: " .. tempFilePath)
+            else
+                print("[Commands.saveCharacterBackup] Errore durante l'eliminazione della copia temporanea " .. tempFilePath .. ": " .. err)
+            end
+        end
     else
-        print("[Commands.saveData] Impossibile aprire il file per la scrittura.")
+        print("[Commands.saveCharacterBackup] Impossibile aprire il file per la scrittura.")
+        -- Ripristinare il file originale dalla copia temporanea
+        if fileExists then
+            local restoreSuccess, restoreErr = os.rename(tempFilePath, filepath)
+            if restoreSuccess then
+                print("[Commands.saveCharacterBackup] Ripristinato il file di backup originale da " .. tempFilePath)
+            else
+                print("[Commands.saveCharacterBackup] Errore durante il ripristino del file originale da " .. tempFilePath .. ": " .. restoreErr)
+            end
+        end
     end
 end
+
 
 
 

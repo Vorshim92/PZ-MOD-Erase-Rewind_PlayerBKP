@@ -56,17 +56,19 @@ if not isClient() then return end
                     end
 
                     characterManagement.writeBook(player, DataMod.Character.BKP_1)
-                    -- local data = {}
-                    -- for _, key in pairs(DataMod.Character.BKP_1) do
-                    --     table.insert(data, modDataManager.read(key))
-                    -- end
-                    local data = player:getModData().Character;
-                    if not data then
-                        print("Player had no BKP_1 data backup.");
-                        return
+                    local data = {}
+                    for _, key in pairs(DataMod.Character.BKP_1) do
+                        table.insert(data, modDataManager.read(key))
                     end
-                    sendServerCommand('Vorshim', "saveCharacterBackup", data)
-                    modDataManager.save(DataMod.Character.BKP_MOD_1, lines)
+                    -- local data = player:getModData().Character;
+                    -- se data è maggiore di 0 allora inviare comando al server
+                    if #data > 0 then
+                        sendServerCommand('Vorshim', "saveCharacterBackup", data)
+                        print("ErasePlayerBKP: BKP_2 inviato al server")
+                        
+                    else
+                        print("ErasePlayerBKP: BKP_2 non inviato al server")
+                    end                    modDataManager.save(DataMod.Character.BKP_MOD_1, lines)
                     print("ErasePlayerBKP: BKP_1 scritto con successo. Orario: " .. time)
                 elseif modDataManager.isExists(DataMod.Character.isDeath) then
                     print("ErasePlayerBKP: Giocatore in BKP_2")
@@ -75,24 +77,23 @@ if not isClient() then return end
                         print("ErasePlayerBKP: BKP_2 pronto per la scrittura")
                     end
                     characterManagement.writeBook(player, DataMod.Character.BKP_2)
-                    -- local data = {}
-                    -- for _, key in pairs(DataMod.Character.BKP_2) do
-                    --     table.insert(data, modDataManager.read(key))
-                    -- end
-                    local data = player:getModData().Character;
-                    if not data then
-                        print("Player had no BKP_2 data backup.");
-                        return
+                    local data = {}
+                    for _, key in pairs(DataMod.Character.BKP_2) do
+                        table.insert(data, modDataManager.read(key))
                     end
-                    sendServerCommand('Vorshim', "saveCharacterBackup", data)
+                    -- local data = player:getModData().Character;
+                    -- se data è maggiore di 0 allora inviare comando al server
+                    if #data > 0 then
+                        sendServerCommand('Vorshim', "saveCharacterBackup", data)
+                        print("ErasePlayerBKP: BKP_2 inviato al server")
+                        
+                    else
+                        print("ErasePlayerBKP: BKP_2 non inviato al server")
+                    end
 
                     modDataManager.save(DataMod.Character.BKP_MOD_2, lines)
                     print("ErasePlayerBKP: BKP_2 scritto con successo. Orario: " .. time)
                 end
-
-                
-                
-        
             else
                 print("ErasePlayerBKP: Impossibile creare il backup: giocatore non disponibile o non vivo.")
             end

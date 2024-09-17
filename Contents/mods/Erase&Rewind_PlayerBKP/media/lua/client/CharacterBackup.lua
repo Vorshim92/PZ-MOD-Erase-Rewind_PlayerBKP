@@ -60,7 +60,7 @@ if not isClient() then return end
                     -- for _, key in pairs(DataMod.Character.BKP_1) do
                     --     table.insert(data, modDataManager.read(key))
                     -- end
-                    local data = player:getModData().Character.BKP_1;
+                    local data = player:getModData().Character;
                     if not data then
                         print("Player had no BKP_1 data backup.");
                         return
@@ -79,7 +79,7 @@ if not isClient() then return end
                     -- for _, key in pairs(DataMod.Character.BKP_2) do
                     --     table.insert(data, modDataManager.read(key))
                     -- end
-                    local data = player:getModData().Character.BKP_2;
+                    local data = player:getModData().Character;
                     if not data then
                         print("Player had no BKP_2 data backup.");
                         return

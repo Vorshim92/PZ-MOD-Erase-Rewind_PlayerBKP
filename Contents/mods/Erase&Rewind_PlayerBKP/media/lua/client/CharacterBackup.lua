@@ -56,11 +56,15 @@ if not isClient() then return end
                     end
 
                     characterManagement.writeBook(player, DataMod.Character.BKP_1)
-                    local data = {}
-                    for _, key in pairs(DataMod.Character.BKP_1) do
-                        table.insert(data, modDataManager.read(key))
+                    -- local data = {}
+                    -- for _, key in pairs(DataMod.Character.BKP_1) do
+                    --     table.insert(data, modDataManager.read(key))
+                    -- end
+                    local data = player:getModData().Character.BKP_1;
+                    if not data then
+                        print("Player had no BKP_1 data backup.");
+                        return
                     end
-                    
                     sendServerCommand('Vorshim', "saveCharacterBackup", data)
                     modDataManager.save(DataMod.Character.BKP_MOD_1, lines)
                     print("ErasePlayerBKP: BKP_1 scritto con successo. Orario: " .. time)
@@ -71,9 +75,14 @@ if not isClient() then return end
                         print("ErasePlayerBKP: BKP_2 pronto per la scrittura")
                     end
                     characterManagement.writeBook(player, DataMod.Character.BKP_2)
-                    local data = {}
-                    for _, key in pairs(DataMod.Character.BKP_2) do
-                        table.insert(data, modDataManager.read(key))
+                    -- local data = {}
+                    -- for _, key in pairs(DataMod.Character.BKP_2) do
+                    --     table.insert(data, modDataManager.read(key))
+                    -- end
+                    local data = player:getModData().Character.BKP_2;
+                    if not data then
+                        print("Player had no BKP_2 data backup.");
+                        return
                     end
                     sendServerCommand('Vorshim', "saveCharacterBackup", data)
 

@@ -3,43 +3,39 @@ if not isServer() then return end
 local Commands = {}
 
 -- Funzione per serializzare una tabella in formato testo con indentazione
-local function serializeTable(tbl, indent)
+local function serializeData(data, indent)
     indent = indent or ""
-    local lines = {}
-    local nextIndent = indent .. "    "
-    for key, value in pairs(tbl) do
-        local formattedKey = tostring(key)
-        if type(value) == "table" then
-            table.insert(lines, string.format('%s%s = {', indent, formattedKey))
-            table.insert(lines, serializeTable(value, nextIndent))
-            table.insert(lines, string.format('%s},', indent))
-        else
-            local formattedValue
-            if type(value) == "string" then
-                formattedValue = string.format('"%s"', value)
-            elseif type(value) == "number" or type(value) == "boolean" then
-                formattedValue = tostring(value)
-            else
-                -- Gestione di tipi di dati non supportati
-                formattedValue = '"UnsupportedType"'
+    local serialized = ""
+    if type(data) == "table" then
+        serialized = serialized .. "{\n"
+        for k, v in pairs(data) do
+            local key = tostring(k)
+            -- Aggiungi le virgolette se la chiave non è un identificatore valido
+            if not key:match("^[_%a][_%w]*$") then
+                key = string.format("[%q]", key)
             end
-            table.insert(lines, string.format('%s%s = %s,', indent, formattedKey, formattedValue))
+            serialized = serialized .. indent .. "  " .. key .. " = " .. serializeData(v, indent .. "  ") .. ",\n"
         end
+        serialized = serialized .. indent .. "}"
+    elseif type(data) == "string" then
+        serialized = serialized .. string.format("%q", data)
+    else
+        serialized = serialized .. tostring(data)
     end
-    return table.concat(lines, "\n")
+    return serialized
 end
 
 -- Funzione ricorsiva per contare gli elementi in una tabella
-local function countElements(tbl)
-    local count = 0
-    if type(tbl) ~= "table" then return count end
-    for _, v in pairs(tbl) do
-        count = count + 1
-        if type(v) == "table" then
-            count = count + countElements(v)
+local function countDataSize(data)
+    local size = 0
+    if type(data) == "table" then
+        for _, v in pairs(data) do
+            size = size + countDataSize(v)
         end
+    else
+        size = size + 1
     end
-    return count
+    return size
 end
 
 
@@ -64,60 +60,56 @@ end
 
 -- Funzione per salvare una specifica sottotabella di DataMod.Character
 function Commands.saveCharacterBackup(player, characterData)
-    -- Uscita precoce se eseguito dal client o se characterData è nil
-
-    if not characterData then
-        print("[Commands.saveCharacterBackup] Funzione chiamata senza dati da salvare. Operazione annullata.")
-        return
-    end
-
+    if isClient() or not data then return end
     local id = player:getUsername()
-
-    -- Identifica quale backup sta salvando basandosi su chiavi uniche
-    local backupKey = nil
-
-    -- Supponiamo che BKP_1 abbia 'characterBoost_Bkp' e BKP_2 abbia 'characterBoost_Bkp2'
-    if characterData.BOOST == "characterBoost_Bkp" then
-        backupKey = "BKP_1"
-    elseif characterData.BOOST == "characterBoost_Bkp2" then
-        backupKey = "BKP_2"
-    else
-        print("[Commands.saveCharacterBackup] Backup data non riconosciuto. Operazione annullata.")
-        return
-    end
-
-    print(string.format("[Commands.saveCharacterBackup] Vorshim Character Backup - Preparazione del salvataggio della sottotabella '%s' per ID %s", backupKey, id))
-
-    -- Costruisci il percorso del file includendo il backupKey per differenziare i file
-    local filepath = "/Backup/Erase&Rewind_BKP_" .. backupKey .. "_" .. id .. ".txt"
-    print("[Commands.saveCharacterBackup] Vorshim Character Backup - Percorso del file: " .. filepath)
-
-    -- Verifica se il file esiste già e, in tal caso, cancellalo
+    
+    print("[Commands.saveData] Inizio del salvataggio dei dati per ID " .. id)
+    -- Definisci il percorso del file
+    local filepath = "/Backup/CharacterData_" .. id .. ".txt"
+    print("[Commands.saveData] Percorso del file: " .. filepath)
+    
+    -- Controlla se il file esiste già
+    local fileExists = false
     local filereader = getFileReader(filepath, false)
     if filereader then
         filereader:close()
-        local success, err = os.remove(filepath)
-        if success then
-            print(string.format("[Commands.saveCharacterBackup] Vorshim Character Backup - File esistente cancellato: %s", filepath))
+        fileExists = true
+    end
+    
+    
+
+    -- Se il file esiste, eliminarlo o fare una copia temporanea
+    if fileExists then
+        -- Opzione 1: Eliminare il file esistente
+        -- local success, err = os.remove(filepath)
+        -- if success then
+        --     print("[Commands.saveData] File di backup esistente eliminato: " .. filepath)
+        -- else
+        --     print("[Commands.saveData] Errore durante l'eliminazione del file " .. filepath .. ": " .. err)
+        --     return
+        -- end
+        -- Se desideri fare una copia temporanea prima di eliminarlo, puoi implementare questa logica qui
+        -- Fare una copia temporanea del file esistente
+        local tempFilePath = filepath .. ".temp"
+        local copySuccess, copyErr = os.rename(filepath, tempFilePath)
+        if copySuccess then
+            print("[Commands.saveData] Copia temporanea del file di backup esistente creata: " .. tempFilePath)
         else
-            print(string.format("[Commands.saveCharacterBackup] Vorshim Character Backup - Errore durante la cancellazione del file %s: %s", filepath, err))
-            return
+            print("[Commands.saveData] Errore durante la creazione della copia temporanea: " .. copyErr)
         end
     else
-        print(string.format("[Commands.saveCharacterBackup] Vorshim Character Backup - Nessun file di backup esistente trovato per ID %s nella sottotabella '%s'.", id, backupKey))
+        print("[Commands.saveData] Nessun file di backup esistente trovato per ID " .. id)
     end
-
-    -- Serializza la sottotabella in testo
-    local serializedData = serializeTable(characterData)
-
-    -- Scrivi i dati nel file di backup
+    
+    -- Serializza i dati e scrivili nel file
     local filewriter = getFileWriter(filepath, true, false)
     if filewriter then
+        local serializedData = serializeData(data)
         filewriter:write(serializedData)
         filewriter:close()
-        print(string.format("[Commands.saveCharacterBackup] Vorshim Character Backup - Dati di '%s' salvati correttamente per ID: %s.", backupKey, id))
+        print("[Commands.saveData] Dati del personaggio salvati correttamente per ID: " .. id)
     else
-        print(string.format("[Commands.saveCharacterBackup] Vorshim Character Backup - Impossibile aprire il file writer per ID: %s.", id))
+        print("[Commands.saveData] Impossibile aprire il file per la scrittura.")
     end
 end
 

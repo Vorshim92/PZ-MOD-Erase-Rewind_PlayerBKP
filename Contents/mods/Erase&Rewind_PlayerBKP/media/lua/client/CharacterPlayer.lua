@@ -1,6 +1,6 @@
 --- **ModData Character**
-local DataMod = {}
-DataMod.Character = {
+local ModData = {}
+ModData.Character = {
 
     BKP_MOD_1 = "BKP_MOD_1",
     BKP_MOD_2 = "BKP_MOD_2",
@@ -18,7 +18,6 @@ DataMod.Character = {
         TRAITS = "characterTraits_Bkp",
         WEIGHT = "characterWeight_Bkp",
         KILLED_ZOMBIES = "characterKilledZombies_Bkp",
-        SKILL_LIMITER = "characterSkillLimiter_Bkp"
     },
     BKP_2 = {
         BOOST = "characterBoost_Bkp2",
@@ -31,7 +30,19 @@ DataMod.Character = {
         TRAITS = "characterTraits_Bkp2",
         WEIGHT = "characterWeight_Bkp2",
         KILLED_ZOMBIES = "characterKilledZombies_Bkp2",
-        SKILL_LIMITER = "characterSkillLimiter_Bkp2"
     }
 }
-return DataMod
+
+if getActivatedMods():contains("SkillLimiter_fix") then
+    ModData.Character.BKP_1.SKILL_LIMITER = "characterSkillLimiter_Bkp"
+    ModData.Character.BKP_2.SKILL_LIMITER = "characterSkillLimiter_Bkp2"
+end
+if getActivatedMods():contains("SurvivalRewards") then
+    ModData.Character.BKP_1.kilMilReached = "characterKilMilReached_Bkp"
+    ModData.Character.BKP_2.kilMilReached = "characterKilMilReached_Bkp2"
+
+    ModData.Character.BKP_1.milReached = "characterMilReached_Bkp"
+    ModData.Character.BKP_2.milReached = "characterMilReached_Bkp2"
+end
+
+return ModData

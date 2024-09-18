@@ -81,6 +81,8 @@ if not isClient() then return end
             modDataManager.save(DataMod.Character.isDeath)
             end
             end)
+
+        return DataMod
     else
         print("ErasePlayerBKP: Mod Erase&Rewind_RPGbyVorshim non attiva. Nessuna azione verrà eseguita.")
     end

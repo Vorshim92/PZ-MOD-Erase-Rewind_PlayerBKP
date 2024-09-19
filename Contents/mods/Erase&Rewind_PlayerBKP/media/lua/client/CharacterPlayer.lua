@@ -4,7 +4,7 @@ local ModData = {}
 
     ModData.BKP_MOD_1 = "BKP_MOD_1"
     ModData.BKP_MOD_2 = "BKP_MOD_2"
-    ModData.isDeath = "isDeath_Bkp"
+    ModData.isDeath = false
 
     -- Chiavi specifiche per il backup periodico del player
     ModData.BKP_1 = {

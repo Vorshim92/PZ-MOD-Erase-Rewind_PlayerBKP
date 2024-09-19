@@ -10,28 +10,33 @@ if not isClient() then return end
         local function onStartSaveBkp(playerIndex, player)
             -- local player = getPlayer() -- do not use because events it self give us player
             if player  then
+                -- salvo il tempo attuale per il backup
                 local time = activityCalendar.getStarTime()
                 time = activityCalendar.fromSecondToDate(time)
                 local lines = {}
                 table.insert(lines, time)
-                if not modDataManager.isExists(playerBkp.isDeath) then
-                    print("ErasePlayerBKP: Giocatore in BKP_1")
-                    if modDataManager.isExists(playerBkp.BKP_MOD_1) then
-                        modDataManager.remove(playerBkp.BKP_MOD_1)
-                        print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
-                    end
 
+                local temp = modDataManager.read("ERASE_REWIND")
+                if not temp.isDeath then
+                    print("ErasePlayerBKP: Giocatore in BKP_1")
+                    -- if temp.BKP_MOD_1 then
+                    --     temp.BKP_MOD_1 = nil
+                    --     print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
+                    -- end
+
+                    temp.BKP_MOD_1 =  lines
+                    modDataManager.save("ERASE_REWIND", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_1)
-                    modDataManager.save(playerBkp.BKP_MOD_1, lines)
                     print("ErasePlayerBKP: BKP_1 scritto con successo. Orario: " .. time)
-                elseif modDataManager.isExists(playerBkp.isDeath) then
+                elseif temp.isDeath then
                     print("ErasePlayerBKP: Giocatore in BKP_2")
-                    if modDataManager.isExists(playerBkp.BKP_MOD_2) then
-                        modDataManager.remove(playerBkp.BKP_MOD_2)
-                        print("ErasePlayerBKP: BKP_2 pronto per la scrittura")
-                    end
+                    -- if temp.BKP_MOD_2 then
+                    --     temp.BKP_MOD_2 = nil
+                    --     print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
+                    -- end
+                    temp.BKP_MOD_2 =  lines
+                    modDataManager.save("ERASE_REWIND", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_2)
-                    modDataManager.save(playerBkp.BKP_MOD_2, lines)
                     print("ErasePlayerBKP: BKP_2 scritto con successo. Orario: " .. time)
                 end
             else
@@ -41,11 +46,13 @@ if not isClient() then return end
 
         Events.OnCreatePlayer.Add(onStartSaveBkp)
         Events.OnCharacterDeath.Add(function()
-            if modDataManager.isExists(playerBkp.isDeath) then
-                modDataManager.remove(playerBkp.isDeath)
-            else
-            modDataManager.save(playerBkp.isDeath)
-            end
+            local temp = modDataManager.read("ERASE_REWIND")
+                if temp.isDeath then
+                    temp.isDeath = false
+                else
+                temp.isDeath = true
+                end
+                modDataManager.save("ERASE_REWIND", temp)
             end)
 
     else

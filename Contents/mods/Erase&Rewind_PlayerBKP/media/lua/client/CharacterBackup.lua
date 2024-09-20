@@ -34,7 +34,7 @@ if not isClient() then return end
                     -- end
                     temp.BKP_MOD_2 =  time
                     modDataManager.save("Erase_Rewind", temp)
-                    characterManagement.writeBook(player, playerBkp.BKP_2, "BKP_1")
+                    characterManagement.writeBook(player, playerBkp.BKP_2, "BKP_2")
                     print("ErasePlayerBKP: BKP_2 scritto con successo. Orario: " .. time)
                 end
             else

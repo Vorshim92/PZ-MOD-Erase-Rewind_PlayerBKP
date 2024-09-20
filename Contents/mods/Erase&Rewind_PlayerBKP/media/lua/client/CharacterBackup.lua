@@ -13,8 +13,6 @@ if not isClient() then return end
                 -- salvo il tempo attuale per il backup
                 local time = activityCalendar.getStarTime()
                 time = activityCalendar.fromSecondToDate(time)
-                local lines = {}
-                table.insert(lines, time)
 
                 local temp = modDataManager.read("Erase_Rewind")
                 if not temp.isDeath then
@@ -24,7 +22,7 @@ if not isClient() then return end
                     --     print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
                     -- end
 
-                    temp.BKP_MOD_1 =  lines
+                    temp.BKP_MOD_1 =  time
                     modDataManager.save("Erase_Rewind", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_1, "BKP_1")
                     print("ErasePlayerBKP: BKP_1 scritto con successo. Orario: " .. time)
@@ -34,7 +32,7 @@ if not isClient() then return end
                     --     temp.BKP_MOD_2 = nil
                     --     print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
                     -- end
-                    temp.BKP_MOD_2 =  lines
+                    temp.BKP_MOD_2 =  time
                     modDataManager.save("Erase_Rewind", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_2, "BKP_1")
                     print("ErasePlayerBKP: BKP_2 scritto con successo. Orario: " .. time)

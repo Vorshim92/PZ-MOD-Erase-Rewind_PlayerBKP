@@ -16,7 +16,7 @@ if not isClient() then return end
                 local lines = {}
                 table.insert(lines, time)
 
-                local temp = modDataManager.read("ERASE_REWIND")
+                local temp = modDataManager.read("Erase_Rewind")
                 if not temp.isDeath then
                     print("ErasePlayerBKP: Giocatore in BKP_1")
                     -- if temp.BKP_MOD_1 then
@@ -25,7 +25,7 @@ if not isClient() then return end
                     -- end
 
                     temp.BKP_MOD_1 =  lines
-                    modDataManager.save("ERASE_REWIND", temp)
+                    modDataManager.save("Erase_Rewind", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_1)
                     print("ErasePlayerBKP: BKP_1 scritto con successo. Orario: " .. time)
                 elseif temp.isDeath then
@@ -35,7 +35,7 @@ if not isClient() then return end
                     --     print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
                     -- end
                     temp.BKP_MOD_2 =  lines
-                    modDataManager.save("ERASE_REWIND", temp)
+                    modDataManager.save("Erase_Rewind", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_2)
                     print("ErasePlayerBKP: BKP_2 scritto con successo. Orario: " .. time)
                 end
@@ -46,13 +46,13 @@ if not isClient() then return end
 
         Events.OnCreatePlayer.Add(onStartSaveBkp)
         Events.OnCharacterDeath.Add(function()
-            local temp = modDataManager.read("ERASE_REWIND")
+            local temp = modDataManager.read("Erase_Rewind")
                 if temp.isDeath then
                     temp.isDeath = false
                 else
                 temp.isDeath = true
                 end
-                modDataManager.save("ERASE_REWIND", temp)
+                modDataManager.save("Erase_Rewind", temp)
             end)
 
     else

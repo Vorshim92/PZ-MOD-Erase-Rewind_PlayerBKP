@@ -47,8 +47,10 @@ if not isClient() then return end
             local temp = modDataManager.read("Erase_Rewind")
                 if temp.isDeath then
                     temp.isDeath = false
+                    print("ErasePlayerBKP: Giocatore è morto, switch a BKP1")
                 else
                 temp.isDeath = true
+                print("ErasePlayerBKP: Giocatore è morto, switch a BKP2")
                 end
                 modDataManager.save("Erase_Rewind", temp)
             end)

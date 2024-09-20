@@ -14,7 +14,7 @@ if not isClient() then return end
                 local time = activityCalendar.getStarTime()
                 time = activityCalendar.fromSecondToDate(time)
 
-                local temp = modDataManager.read("Erase_Rewind")
+                local temp = modDataManager.readOrCreate("Erase_Rewind")
                 if not temp.isDeath then
                     print("ErasePlayerBKP: Giocatore in BKP_1")
                     -- if temp.BKP_MOD_1 then
@@ -44,7 +44,7 @@ if not isClient() then return end
 
         Events.OnCreatePlayer.Add(onStartSaveBkp)
         Events.OnCharacterDeath.Add(function()
-            local temp = modDataManager.read("Erase_Rewind")
+            local temp = modDataManager.readOrCreate("Erase_Rewind")
                 if temp.isDeath then
                     temp.isDeath = false
                     print("ErasePlayerBKP: Giocatore è morto, switch a BKP1")

@@ -2,7 +2,7 @@ if not isClient() then return end
     if getActivatedMods():contains("Erase&Rewind_RPGbyVorshim") then
         local characterManagement = require('character/CharacterManagement')
         local activityCalendar = require('lib/ActivityCalendar')
-        local modDataManager = require('lib/ModDataManager')
+        -- local modDataManager = require('lib/ModDataManager')
         local playerBkp = require('CharacterPlayer')
 
         
@@ -14,7 +14,7 @@ if not isClient() then return end
                 local time = activityCalendar.getStarTime()
                 time = activityCalendar.fromSecondToDate(time)
 
-                local temp = modDataManager.readOrCreate("Erase_Rewind")
+                local temp = ModData.getOrCreate("Erase_Rewind")
                 if not temp.isDeath then
                     print("ErasePlayerBKP: Giocatore in BKP_1")
                     -- if temp.BKP_MOD_1 then
@@ -23,7 +23,7 @@ if not isClient() then return end
                     -- end
 
                     temp.BKP_MOD_1 =  time
-                    modDataManager.save("Erase_Rewind", temp)
+                    ModData.add("Erase_Rewind", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_1, "BKP_1")
                     print("ErasePlayerBKP: BKP_1 scritto con successo. Orario: " .. time)
                 elseif temp.isDeath then
@@ -33,7 +33,7 @@ if not isClient() then return end
                     --     print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
                     -- end
                     temp.BKP_MOD_2 =  time
-                    modDataManager.save("Erase_Rewind", temp)
+                    ModData.add("Erase_Rewind", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_2, "BKP_2")
                     print("ErasePlayerBKP: BKP_2 scritto con successo. Orario: " .. time)
                 end
@@ -44,7 +44,7 @@ if not isClient() then return end
 
         Events.OnCreatePlayer.Add(onStartSaveBkp)
         Events.OnCharacterDeath.Add(function()
-            local temp = modDataManager.readOrCreate("Erase_Rewind")
+            local temp = ModData.getOrCreate("Erase_Rewind")
                 if temp.isDeath then
                     temp.isDeath = false
                     print("ErasePlayerBKP: Giocatore è morto, switch a BKP1")
@@ -52,7 +52,7 @@ if not isClient() then return end
                 temp.isDeath = true
                 print("ErasePlayerBKP: Giocatore è morto, switch a BKP2")
                 end
-                modDataManager.save("Erase_Rewind", temp)
+                ModData.add("Erase_Rewind", temp)
             end)
 
     else

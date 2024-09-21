@@ -7,8 +7,8 @@ if not isClient() then return end
         IsNewGame = false
         
 
-        local function onStartSaveBkp(playerIndex, player)
-            -- local player = getPlayer() -- do not use because events it self give us player
+        local function onStartSaveBkp()
+            local player = getPlayer() -- do not use because events it self give us player
             if player  then
                 -- salvo il tempo attuale per il backup
                 local time = activityCalendar.getStarTime()

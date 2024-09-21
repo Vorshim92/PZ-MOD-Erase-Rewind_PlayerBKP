@@ -4,7 +4,7 @@ if not isClient() then return end
         local activityCalendar = require('lib/ActivityCalendar')
         -- local modDataManager = require('lib/ModDataManager')
         local playerBkp = require('CharacterPlayer')
-
+        IsNewGame = false
         
 
         local function onStartSaveBkp(playerIndex, player)
@@ -42,7 +42,21 @@ if not isClient() then return end
             end
         end
 
-        Events.OnCreatePlayer.Add(onStartSaveBkp)
+        local tickDelay = 20
+        function CreateDelay()
+            if tickDelay == 0 then
+            onStartSaveBkp()
+            Events.OnTick.Remove(CreateDelay)
+            return
+            end
+            tickDelay = tickDelay - 1
+        end
+
+        local function onCreatedPlayer(playerIndex, player)
+            Events.OnTick.Add(CreateDelay)
+          end
+          
+        Events.OnCreatePlayer.Add(onCreatedPlayer)
         Events.OnCharacterDeath.Add(function()
             local temp = ModData.getOrCreate("Erase_Rewind")
                 if temp.isDeath then
@@ -54,6 +68,7 @@ if not isClient() then return end
                 end
                 ModData.add("Erase_Rewind", temp)
             end)
+        
 
     else
         print("ErasePlayerBKP: Mod Erase&Rewind_RPGbyVorshim non attiva. Nessuna azione verrà eseguita.")

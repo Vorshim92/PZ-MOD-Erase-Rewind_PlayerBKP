@@ -8,30 +8,20 @@ if not isClient() then return end
         
 
         local function onStartSaveBkp()
-            local player = getPlayer() -- do not use because events it self give us player
+            local player = getPlayer()
             if player  then
                 -- salvo il tempo attuale per il backup
                 local time = activityCalendar.getStarTime()
                 time = activityCalendar.fromSecondToDate(time)
-
                 local temp = ModData.getOrCreate("Erase_Rewind")
                 if not temp.isDeath then
-                    print("ErasePlayerBKP: Giocatore in BKP_1")
-                    -- if temp.BKP_MOD_1 then
-                    --     temp.BKP_MOD_1 = nil
-                    --     print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
-                    -- end
-
                     temp.BKP_MOD_1 =  time
                     ModData.add("Erase_Rewind", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_1, "BKP_1")
                     print("ErasePlayerBKP: BKP_1 scritto con successo. Orario: " .. time)
                 elseif temp.isDeath then
                     print("ErasePlayerBKP: Giocatore in BKP_2")
-                    -- if temp.BKP_MOD_2 then
-                    --     temp.BKP_MOD_2 = nil
-                    --     print("ErasePlayerBKP: BKP_1 pronto per la scrittura")
-                    -- end
+
                     temp.BKP_MOD_2 =  time
                     ModData.add("Erase_Rewind", temp)
                     characterManagement.writeBook(player, playerBkp.BKP_2, "BKP_2")
@@ -42,32 +32,34 @@ if not isClient() then return end
             end
         end
 
-        local tickDelay = 20
-        function CreateDelay()
+        local tickDelay = 200
+        function CreateDelayBkp()
             if tickDelay == 0 then
             onStartSaveBkp()
-            Events.OnTick.Remove(CreateDelay)
+            Events.OnTick.Remove(CreateDelayBkp)
             return
             end
             tickDelay = tickDelay - 1
         end
 
-        local function onCreatedPlayer(playerIndex, player)
-            Events.OnTick.Add(CreateDelay)
+        local function onCreatedPlayerBkp(playerIndex, player)
+            Events.OnTick.Add(CreateDelayBkp)
           end
           
-        Events.OnCreatePlayer.Add(onCreatedPlayer)
-        Events.OnCharacterDeath.Add(function()
-            local temp = ModData.getOrCreate("Erase_Rewind")
-                if temp.isDeath then
-                    temp.isDeath = false
-                    print("ErasePlayerBKP: Giocatore è morto, switch a BKP1")
-                else
-                temp.isDeath = true
-                print("ErasePlayerBKP: Giocatore è morto, switch a BKP2")
-                end
+        Events.OnCreatePlayer.Add(onCreatedPlayerBkp)
+        Events.OnPlayerDeath.Add(function()
+            if getPlayer():isDead() then
+                local temp = ModData.getOrCreate("Erase_Rewind")
+                    if temp.isDeath then
+                        temp.isDeath = false
+                        print("ErasePlayerBKP: Giocatore è morto, switch a BKP1")
+                    else
+                    temp.isDeath = true
+                    print("ErasePlayerBKP: Giocatore è morto, switch a BKP2")
+                    end
                 ModData.add("Erase_Rewind", temp)
-            end)
+            end
+        end)
         
 
     else

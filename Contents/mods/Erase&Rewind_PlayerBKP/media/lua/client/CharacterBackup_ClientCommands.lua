@@ -2,7 +2,7 @@ if not isClient() then return end
 local Commands = {}
 
 function Commands.setProgress(args)
-
+	-- WIP
 end
 
 Events.OnServerCommand.Add(function(module, command, args)

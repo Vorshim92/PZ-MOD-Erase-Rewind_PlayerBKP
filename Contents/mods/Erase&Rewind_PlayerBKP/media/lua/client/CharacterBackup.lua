@@ -33,18 +33,18 @@ if not isClient() then return end
         end
 
         local tickDelay = 200
-        function CreateDelayBkp()
+        local function CreateDelay()
             if tickDelay == 0 then
             onStartSaveBkp()
-            Events.OnTick.Remove(CreateDelayBkp)
+            Events.OnTick.Remove(CreateDelay)
             return
             end
             tickDelay = tickDelay - 1
         end
 
         local function onCreatedPlayerBkp(playerIndex, player)
-            Events.OnTick.Add(CreateDelayBkp)
-          end
+            Events.OnTick.Add(CreateDelay)
+        end
           
         Events.OnCreatePlayer.Add(onCreatedPlayerBkp)
         Events.OnPlayerDeath.Add(function()

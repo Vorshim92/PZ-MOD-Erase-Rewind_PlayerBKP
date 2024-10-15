@@ -4,7 +4,6 @@ if not isClient() then return end
         local activityCalendar = require('lib/ActivityCalendar')
         -- local modDataManager = require('lib/ModDataManager')
         local playerBkp = require('CharacterPlayer')
-        IsNewGame = false
         
 
         local function onStartSaveBkp()

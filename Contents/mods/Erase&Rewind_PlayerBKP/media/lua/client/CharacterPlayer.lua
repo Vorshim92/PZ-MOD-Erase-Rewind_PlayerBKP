@@ -37,7 +37,7 @@ if getActivatedMods():contains("SkillLimiter_fix") then
     ModData.BKP_1["SKILL_LIMITER"] = {}
     ModData.BKP_2["SKILL_LIMITER"] = {}
 end
-if getActivatedMods():contains("SurvivalRewards") then
+if getActivatedMods():contains("SurvivalRewards2") then
     ModData.BKP_1["kilMilReached"] = {}
     ModData.BKP_2["kilMilReached"] = {}
     ModData.BKP_1["milReached"] = {}
